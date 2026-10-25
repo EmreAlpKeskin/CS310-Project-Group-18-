@@ -5,9 +5,10 @@ A flashcard app for learning vocabulary, built with Flutter. Cards are reviewed 
 ## Group 18
 
 TA: Beyzagül Demir
-Step 1 coordinator: [Çağan Aydınyüz]
+Step 1 coordinator: Çağan Aydınyüz
 
 | Name | Student ID | GitHub |
+|---|---|---|
 | Çağan Aydınyüz | 35541 | cagkag |
 | Emre Alp Keskin | 35684 | EmreAlpKeskin |
 | İsmet Arda Uçar | 35512 | IridiumM |
