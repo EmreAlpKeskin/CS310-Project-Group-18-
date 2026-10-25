@@ -1,4 +1,4 @@
-# Lexicodec
+# Lexicodeck
 
 A flashcard app for learning vocabulary, built with Flutter. Cards are reviewed with spaced repetition, so words you struggle with show up more often and words you know show up less. Everything is stored on the phone, no account or internet needed.
 
