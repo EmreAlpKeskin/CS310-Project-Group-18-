@@ -4,8 +4,8 @@ A flashcard app for learning vocabulary, built with Flutter. Cards are reviewed 
 
 ## Group 18
 
-TA: Beyzagül Demir
-Step 1 coordinator: Çağan Aydınyüz
+- TA: Beyzagül Demir
+- Step 1 coordinator: Çağan Aydınyüz
 
 | Name | Student ID | GitHub |
 |---|---|---|
@@ -24,9 +24,8 @@ If we have time: reminder notifications, CSV import/export, text-to-speech.
 
 ## Running it
 
-```bash
+bash
 git clone https://github.com/EmreAlpKeskin/CS310-Project-Group-18-
 cd CS310-Project-Group-18-
 flutter pub get
 flutter run
-```
