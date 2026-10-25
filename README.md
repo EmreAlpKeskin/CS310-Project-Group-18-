@@ -24,8 +24,9 @@ If we have time: reminder notifications, CSV import/export, text-to-speech.
 
 ## Running it
 
-bash
+```bash
 git clone https://github.com/EmreAlpKeskin/CS310-Project-Group-18-
 cd CS310-Project-Group-18-
 flutter pub get
 flutter run
+```
