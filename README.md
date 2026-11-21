@@ -1,11 +1,6 @@
 # Lexicodeck
 
-A flashcard app for learning vocabulary, built with Flutter. Cards are reviewed with spaced repetition, so words you struggle with show up more often and words you know show up less. Everything is stored on the phone, no account or internet needed.
-
-## Group 18
-
-- TA: Beyzagül Demir
-- Step 1 coordinator: Çağan Aydınyüz
+A flashcard app for learning vocabulary, built with Flutter (CS310, Group 18).
 
 | Name | Student ID | GitHub |
 |---|---|---|
@@ -13,16 +8,26 @@ A flashcard app for learning vocabulary, built with Flutter. Cards are reviewed 
 | Emre Alp Keskin | 35684 | EmreAlpKeskin |
 | İsmet Arda Uçar | 35512 | IridiumM |
 
-## What it will do
+TA: Beyzagül Demir
 
-- Make decks and cards (word, translation, example sentence)
-- Daily review of the cards that are due, rated Again / Hard / Good / Easy
-- Stats: cards learned, accuracy, daily streak
-- Local SQLite database
+## Step 2.2: UI implementation
 
-If we have time: reminder notifications, CSV import/export, text-to-speech.
+All screens from our Step 2.1 wireframes are implemented with working navigation. The app is **UI only**: it shows sample data and saves nothing. Log in, sign up and guest mode just open Home. Firebase comes in Step 3.
+
+- Code: `lib/main.dart`
+- Shared style files: `lib/app_colors.dart`, `lib/app_text_styles.dart`, `lib/app_spacing.dart`
+- Reusable widgets: shared section of `lib/main.dart`
+- Local image: `assets/images/cards_stack.png` (Welcome)
+- Network images: deck flags (DeckTile)
+- Custom font: Poppins (`assets/fonts/`, declared in `pubspec.yaml`)
+- Card list with a working remove action: Deck Detail
+- Forms with inline validation and a confirmation dialog: Create Deck, Add Card
+- Dark mode: Settings
+- No overflow on small or large phones: pages scroll (ListView), rows use Expanded
 
 ## Running it
+
+Flutter version: **3.35.6** (stable, Dart 3.9.2).
 
 ```bash
 git clone https://github.com/EmreAlpKeskin/CS310-Project-Group-18-
@@ -30,3 +35,5 @@ cd CS310-Project-Group-18-
 flutter pub get
 flutter run
 ```
+
+Run it on an Android emulator or iOS simulator. The flag images need internet.
