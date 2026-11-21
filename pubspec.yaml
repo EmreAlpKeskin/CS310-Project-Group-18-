@@ -1,0 +1,32 @@
+name: lexicodeck
+description: "Lexicodeck - spaced-repetition language flashcards (CS310 Group 18)."
+publish_to: 'none'
+version: 0.2.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Local images (the Welcome screen logo).
+  assets:
+    - assets/images/
+
+  # Custom font, bundled with the app so it also works offline.
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
