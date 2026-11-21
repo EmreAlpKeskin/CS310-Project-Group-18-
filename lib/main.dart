@@ -288,3 +288,197 @@ const List<Deck> sampleDecks = [
     Flashcard('Hon', 'Book'),
   ]),
 ];
+
+// #####################################################################
+// CAGAN'S PAGES: Welcome, Home, Review Session, Settings
+// #####################################################################
+
+// Page 1, Welcome: first page, with Log in / Sign up / guest buttons.
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          // Scrolls on small phones, so nothing overflows.
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.large),
+            child: Column(
+              children: [
+                // Local image from the assets/images folder.
+                Image.asset('assets/images/cards_stack.png', height: 150),
+                const SizedBox(height: AppSpacing.medium),
+                const Text('lexicodeck', style: AppTextStyles.logo),
+                const SizedBox(height: AppSpacing.small),
+                const Text('Learn words, one card at a time.'),
+                const SizedBox(height: 50),
+                ActionButton('Log in', onPressed: () => openPage(context, const LoginScreen())),
+                const SizedBox(height: 12),
+                ActionButton('Sign up', onPressed: () => openPage(context, const SignUpScreen())),
+                // Guest: goes straight to Home.
+                TextButton(
+                    onPressed: () => openPage(context, const HomeScreen()),
+                    child: const Text('Continue as a guest')),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Page 4, Home: streak card and your decks.
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Home', showTabs: true, children: [
+      const Text('Welcome to Lexicodeck!', style: AppTextStyles.title),
+      const SizedBox(height: AppSpacing.medium),
+      // Streak card: fire icon + "5 day streak".
+      const Card(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.page),
+          child: Row(children: [
+            Icon(Icons.local_fire_department, color: AppColors.streak, size: 38),
+            SizedBox(width: 12),
+            Expanded(child: Text('5 day streak', style: AppTextStyles.normal)),
+          ]),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.medium),
+      // "Your decks" on the left, "See all" on the right.
+      Row(children: [
+        const Expanded(child: Text('Your decks', style: AppTextStyles.title)),
+        TextButton(onPressed: () => openPage(context, const DeckListScreen()), child: const Text('See all')),
+      ]),
+      // One DeckTile for every deck in sampleDecks.
+      Column(children: sampleDecks.map((deck) => DeckTile(deck, onHome: true)).toList()),
+    ]);
+  }
+}
+
+// Page 9, Review Session: shows a word, Reveal shows the answer.
+class ReviewScreen extends StatefulWidget {
+  const ReviewScreen({super.key});
+
+  @override
+  State<ReviewScreen> createState() => _ReviewScreenState();
+}
+
+class _ReviewScreenState extends State<ReviewScreen> {
+  bool revealed = false; // false = answer hidden, true = answer shown
+
+  // One rating button. All four open Session Complete.
+  Widget ratingButton(String text) {
+    return ElevatedButton(
+      onPressed: () => openPage(context, const SessionCompleteScreen()),
+      child: Text(text),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Review Session', children: [
+      const Center(child: Text('3/30', style: AppTextStyles.normal)), // card 3 of 30
+      const SizedBox(height: AppSpacing.large),
+      const Center(child: Text('Guess!', style: AppTextStyles.title)),
+      const SizedBox(height: 15),
+      // The card with the word.
+      const Card(
+        child: SizedBox(
+          height: 140,
+          child: Center(child: Text('apple', style: AppTextStyles.logo)),
+        ),
+      ),
+      const SizedBox(height: 15),
+      // If revealed: translation + rating buttons. If not: Reveal button.
+      revealed
+          ? Column(children: [
+              const Text('Translation: elma', style: AppTextStyles.normal),
+              const SizedBox(height: AppSpacing.medium),
+              // Wrap: buttons go to the next line if the screen is narrow.
+              Wrap(spacing: 8, runSpacing: 8, children: [
+                ratingButton('Again'),
+                ratingButton('Hard'),
+                ratingButton('Good'),
+                ratingButton('Easy'),
+              ]),
+            ])
+          : ActionButton('Reveal', onPressed: () {
+              setState(() {
+                revealed = true; // rebuild the page with the answer shown
+              });
+            }),
+      const SizedBox(height: AppSpacing.large),
+      // Leave Early: go back to the previous page.
+      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Leave Early')),
+    ]);
+  }
+}
+
+// Page 12, Settings: dark mode, notifications, account, logout.
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool notifications = false; // only moves the switch, nothing is saved
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Settings', showTabs: true, children: [
+      // Dark mode row.
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.dark_mode),
+          title: const Text('Dark mode'),
+          trailing: Switch(
+            value: darkModeOn,
+            onChanged: (bool value) {
+              changeDarkMode(value); // change the theme of the whole app
+              setState(() {}); // redraw this page so the switch moves
+            },
+          ),
+        ),
+      ),
+      // Notifications row.
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.notifications),
+          title: const Text('Notifications'),
+          trailing: Switch(
+            value: notifications,
+            onChanged: (bool value) {
+              setState(() {
+                notifications = value;
+              });
+            },
+          ),
+        ),
+      ),
+      // Account info row (fake email).
+      const Card(
+        child: ListTile(
+          leading: Icon(Icons.person),
+          title: Text('Account info'),
+          subtitle: Text('example@email.com'),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.large),
+      ActionButton('Logout', onPressed: () => openPage(context, const WelcomeScreen())),
+      // Red text button, does nothing (UI only).
+      TextButton(
+        onPressed: () {},
+        child: const Text('Delete account', style: TextStyle(color: AppColors.danger)),
+      ),
+    ]);
+  }
+}
