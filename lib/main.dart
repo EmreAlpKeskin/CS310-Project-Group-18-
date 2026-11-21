@@ -482,3 +482,138 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ]);
   }
 }
+// #####################################################################
+// İSMET'S PAGES: Log In, Decks, Deck Detail, Add Card
+// #####################################################################
+
+// Page 2, Log In: email and password, the button opens Home.
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Log In', children: [
+      const SizedBox(height: 35),
+      const InputBox('Email', hint: 'example@email.com'),
+      const InputBox('Password', password: true),
+      // "Forgot password?" on the right side, does nothing.
+      Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(onPressed: () {}, child: const Text('Forgot password?')),
+      ),
+      const SizedBox(height: 20),
+      ActionButton('Log Into Account', onPressed: () => openPage(context, const HomeScreen())),
+    ]);
+  }
+}
+
+// Page 5, Decks: list of all decks.
+class DeckListScreen extends StatelessWidget {
+  const DeckListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Decks', showTabs: true, children: [
+      // One DeckTile for every deck (with the gear button).
+      Column(children: sampleDecks.map((deck) => DeckTile(deck)).toList()),
+      const SizedBox(height: AppSpacing.medium),
+      ActionButton('+ Create Deck', onPressed: () => openPage(context, const CreateDeckScreen())),
+    ]);
+  }
+}
+
+// Page 6, Deck Detail: the cards of one deck, the bin removes a card.
+class DeckDetailScreen extends StatefulWidget {
+  final Deck deck; // the deck that was tapped
+  const DeckDetailScreen({super.key, required this.deck});
+
+  @override
+  State<DeckDetailScreen> createState() => _DeckDetailScreenState();
+}
+
+class _DeckDetailScreenState extends State<DeckDetailScreen> {
+  // The cards shown on this page. A copy, so removing doesn't change sampleDecks.
+  List<Flashcard> cards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    cards = widget.deck.cards.toList(); // copy the deck's cards when the page opens
+  }
+
+  // One flashcard as a Card: word, translation, edit and remove buttons.
+  Widget cardTile(Flashcard card) {
+    return Card(
+      child: ListTile(
+        title: Text(card.word),
+        subtitle: Text(card.translation),
+        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+          // Pencil: opens the Add Card page.
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => openPage(context, const AddCardScreen()),
+          ),
+          // Bin: removes this card from the list.
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            onPressed: () {
+              setState(() {
+                cards.remove(card); // page redraws without this card
+              });
+            },
+          ),
+        ]),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: widget.deck.name, children: [
+      Text('${widget.deck.cardCount} cards in deck', style: AppTextStyles.normal),
+      const SizedBox(height: AppSpacing.medium),
+      // One cardTile for every card left in the list.
+      Column(children: cards.map((card) => cardTile(card)).toList()),
+      const SizedBox(height: AppSpacing.medium),
+      ActionButton('+ Add Card', onPressed: () => openPage(context, const AddCardScreen())),
+      const SizedBox(height: AppSpacing.small),
+      ActionButton('Study', onPressed: () => openPage(context, const ReviewScreen())),
+      TextButton(
+        onPressed: () => openPage(context, const CreateDeckScreen()),
+        child: const Text('Edit Deck'),
+      ),
+    ]);
+  }
+}
+
+// Page 8, Add Card: form for a new card, with validation.
+class AddCardScreen extends StatefulWidget {
+  const AddCardScreen({super.key});
+
+  @override
+  State<AddCardScreen> createState() => _AddCardScreenState();
+}
+
+class _AddCardScreenState extends State<AddCardScreen> {
+  final _formKey = GlobalKey<FormState>(); // lets us check the form
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: PageContent(title: 'Add Card to Deck', children: [
+        const SizedBox(height: AppSpacing.medium),
+        const InputBox('Word', hint: 'Book', validator: requiredField),
+        const InputBox('Translation', hint: 'Kitap', validator: requiredField),
+        const InputBox('In sentence example (optional)', hint: 'Example sentence'),
+        const SizedBox(height: AppSpacing.page),
+        ActionButton('ADD', onPressed: () {
+          // validate() runs every validator; red errors show if something is empty.
+          if (_formKey.currentState!.validate()) {
+            showDoneDialog(context, 'The card was added to the deck.');
+          }
+        }),
+      ]),
+    );
+  }
+}
