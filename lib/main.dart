@@ -617,3 +617,151 @@ class _AddCardScreenState extends State<AddCardScreen> {
     );
   }
 }
+
+// #####################################################################
+// EMRE'S PAGES: Sign Up, Create/Edit Deck, Session Complete, Statistics
+// #####################################################################
+
+// Page 3, Sign Up: name, email, password, the button opens Home.
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Sign Up', children: [
+      const SizedBox(height: 25),
+      const InputBox('Name', hint: 'Example Name'),
+      const InputBox('Email', hint: 'example@email.com'),
+      const InputBox('Password', password: true),
+      const InputBox('Confirm Password', password: true),
+      const SizedBox(height: 12),
+      ActionButton('Create Account', onPressed: () => openPage(context, const HomeScreen())),
+    ]);
+  }
+}
+
+// Page 7, Create/Edit Deck: form for a deck, with validation.
+class CreateDeckScreen extends StatefulWidget {
+  const CreateDeckScreen({super.key});
+
+  @override
+  State<CreateDeckScreen> createState() => _CreateDeckScreenState();
+}
+
+class _CreateDeckScreenState extends State<CreateDeckScreen> {
+  final _formKey = GlobalKey<FormState>(); // lets us check the form
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: PageContent(title: 'Create/Edit Decks', children: [
+        const SizedBox(height: AppSpacing.medium),
+        const InputBox('Deck Name', hint: 'Example Deck', validator: requiredField),
+        const InputBox('Language 1', hint: 'English', validator: requiredField),
+        const InputBox('Language 2', hint: 'Turkish', validator: requiredField),
+        const SizedBox(height: AppSpacing.page),
+        ActionButton('SAVE', onPressed: () {
+          // Only show the popup if every field is filled.
+          if (_formKey.currentState!.validate()) {
+            showDoneDialog(context, 'Your deck was saved.');
+          }
+        }),
+        // Bin: goes back, nothing is deleted.
+        IconButton(
+          icon: const Icon(Icons.delete, color: AppColors.danger),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ]),
+    );
+  }
+}
+
+// Page 10, Session Complete: results after a review.
+class SessionCompleteScreen extends StatelessWidget {
+  const SessionCompleteScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Session Complete', children: [
+      const SizedBox(height: 40),
+      const Center(child: Icon(Icons.star, color: AppColors.trophy, size: 80)),
+      const Center(child: Text('GOOD JOB!', style: AppTextStyles.big)),
+      const SizedBox(height: 35),
+      // Two results side by side: accuracy and number of cards.
+      const Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Column(children: [Text('69%', style: AppTextStyles.big), Text('Accuracy')]),
+        Column(children: [Text('11', style: AppTextStyles.big), Text('Cards')]),
+      ]),
+      const SizedBox(height: 40),
+      ActionButton('Return Home', onPressed: () => openPage(context, const HomeScreen())),
+      const SizedBox(height: 12),
+      ActionButton('Keep Going :)', onPressed: () => openPage(context, const ReviewScreen())),
+    ]);
+  }
+}
+
+// Page 11, Statistics: bar chart and numbers.
+class StatisticsScreen extends StatelessWidget {
+  const StatisticsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PageContent(title: 'Statistics', showTabs: true, children: [
+      // Bar chart: 7 bars, one per day. The number is the bar's height.
+      const SizedBox(
+        height: 120,
+        child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Bar(40),
+          Bar(70),
+          Bar(55),
+          Bar(110),
+          Bar(60),
+          Bar(90),
+          Bar(75),
+        ]),
+      ),
+      const SizedBox(height: AppSpacing.medium),
+      const Card(
+        child: ListTile(
+          leading: Icon(Icons.school, color: AppColors.primary),
+          title: Text('Cards learned'),
+          trailing: Text('240', style: AppTextStyles.title),
+        ),
+      ),
+      const Card(
+        child: ListTile(
+          leading: Icon(Icons.check_circle, color: AppColors.primary),
+          title: Text('Review accuracy'),
+          trailing: Text('69%', style: AppTextStyles.title),
+        ),
+      ),
+      const Card(
+        child: ListTile(
+          leading: Icon(Icons.local_fire_department, color: AppColors.streak),
+          title: Text('Daily streak'),
+          trailing: Text('12', style: AppTextStyles.title),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.medium),
+      ActionButton('Return Home', onPressed: () => openPage(context, const HomeScreen())),
+    ]);
+  }
+}
+
+// Bar: one blue bar of the Statistics chart.
+class Bar extends StatelessWidget {
+  final double height;
+  const Bar(this.height, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        height: height,
+        margin: const EdgeInsets.symmetric(horizontal: 4), // gap between bars
+        color: AppColors.primary,
+      ),
+    );
+  }
+}
