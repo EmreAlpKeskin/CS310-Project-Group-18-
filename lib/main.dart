@@ -231,3 +231,60 @@ class DeckTile extends StatelessWidget {
   }
 }
 
+
+// Shows a "Done!" popup with a message.
+// OK closes the popup and goes back one page.
+void showDoneDialog(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Done!'),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(dialogContext); // close the popup
+            Navigator.pop(context); // go back one page
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
+// Flashcard: one word card (word, translation, example sentence).
+class Flashcard {
+  final String word;
+  final String translation;
+  final String example; // optional, empty if not given
+
+  const Flashcard(this.word, this.translation, {this.example = ''});
+}
+
+// Deck: a group of flashcards between two languages.
+class Deck {
+  final String name;
+  final String flagUrl; // link to a flag picture on the internet
+  final int cardCount; // total cards (shown as text)
+  final int dueCount; // cards to review today (shown as text)
+  final List<Flashcard> cards;
+
+  const Deck(this.name, this.flagUrl, this.cardCount, this.dueCount, this.cards);
+}
+
+// Sample decks shown in the app (fake data, nothing is saved).
+// Deck(name, flag link, card count, due count, cards)
+const List<Deck> sampleDecks = [
+  Deck('English - Turkish', 'https://flagcdn.com/w80/tr.png', 130, 30, [
+    Flashcard('Kitap', 'Book', example: 'I am reading a book.'),
+    Flashcard('Elma', 'Apple'),
+    Flashcard('Armut', 'Pear'),
+    Flashcard('Su', 'Water', example: 'Can I have some water?'),
+  ]),
+  Deck('Japanese - English', 'https://flagcdn.com/w80/jp.png', 40, 31, [
+    Flashcard('Neko', 'Cat'),
+    Flashcard('Mizu', 'Water'),
+    Flashcard('Hon', 'Book'),
+  ]),
+];
