@@ -139,3 +139,95 @@ class TabButton extends StatelessWidget {
     );
   }
 }
+
+// ActionButton: the big blue full-width button.
+class ActionButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed; // can be empty (button does nothing)
+  const ActionButton(this.text, {super.key, this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity, // full width
+      child: ElevatedButton(
+        onPressed: onPressed ?? () {}, // if no onPressed is given, do nothing
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white, // text color
+          padding: const EdgeInsets.symmetric(vertical: 15),
+        ),
+        child: Text(text),
+      ),
+    );
+  }
+}
+
+// InputBox: a text field with a label and a border.
+// password: true hides the text with dots.
+// validator: checks the text; its message is shown in red under the field.
+class InputBox extends StatelessWidget {
+  final String label; // title of the field
+  final String hint; // grey example text inside the field
+  final bool password;
+  final String? Function(String?)? validator;
+
+  const InputBox(this.label, {super.key, this.hint = '', this.password = false, this.validator});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14), // gap under each field
+      child: TextFormField(
+        obscureText: password,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+}
+
+// Validator for fields that can't be empty.
+// Returns an error text if empty, null if OK.
+String? requiredField(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'This field is required';
+  }
+  return null;
+}
+
+// DeckTile: one deck shown as a Card (flag, name, card counts).
+// The flag picture is a network image (needs internet).
+// onHome: true  -> play button, opens Review Session (used on Home)
+// onHome: false -> gear button, opens Deck Detail (used on Decks page)
+class DeckTile extends StatelessWidget {
+  final Deck deck;
+  final bool onHome;
+  const DeckTile(this.deck, {super.key, this.onHome = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        // SizedBox keeps the flag small, even if it can't load.
+        leading: SizedBox(width: 40, height: 30, child: Image.network(deck.flagUrl)),
+        title: Text(deck.name, style: AppTextStyles.bold),
+        subtitle: Text('${deck.cardCount} cards, ${deck.dueCount} due'),
+        trailing: onHome
+            ? IconButton(
+                icon: const Icon(Icons.play_arrow),
+                onPressed: () => openPage(context, const ReviewScreen()),
+              )
+            : IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () => openPage(context, DeckDetailScreen(deck: deck)),
+              ),
+      ),
+    );
+  }
+}
+
